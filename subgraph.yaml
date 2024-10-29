@@ -1,0 +1,41 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: jackramp
+    network: holesky
+    source:
+      address: "0x148828f34cb1aa997422ebf6a41855f18b849f6f"
+      abi: jackramp
+      startBlock: 2630132
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - OfframpRequest
+        - Task
+        - Operator
+        - Token
+      abis:
+        - name: jackramp
+          file: ./abis/jackramp.json
+      eventHandlers:
+        - event: RequestOfframp(bytes32,(address,uint256,uint256,bytes32,bytes32,uint32))
+          handler: handleRequestOfframp
+        - event: FillOfframp(bytes32,address,bytes32,bytes32)
+          handler: handleFillOfframp
+        - event: NewTaskCreated(indexed uint32,(string,string,bytes32,address,uint32))
+          handler: handleNewTaskCreated
+        - event: TaskResponded(indexed uint32,(string,string,bytes32,address,uint32),address)
+          handler: handleTaskResponded
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+        - event: Mint(indexed address,uint256)
+          handler: handleMint
+        - event: Withdraw(indexed address,uint256)
+          handler: handleWithdraw
+      file: ./src/mapping.ts
