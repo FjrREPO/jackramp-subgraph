@@ -1,0 +1,8 @@
+{
+  "holesky": {
+    "TransparentUpgradeableProxy": {
+      "address": "0x148828f34cb1aa997422ebf6a41855f18b849f6f",
+      "startBlock": 2630132
+    }
+  }
+}
