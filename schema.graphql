@@ -77,27 +77,30 @@ type TokenHolder @entity {
   transactions: [Transfer!]! @derivedFrom(field: "to")
 }
 
-type Transfer @entity {
-  id: ID!
-  from: Bytes!
-  to: TokenHolder!
-  value: BigInt!
-  timestamp: BigInt!
+type Transfer @entity(immutable: true) {
+  id: Bytes!
+  from: Bytes! # address
+  to: TokenHolder! # address
+  value: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
 
-type Mint @entity {
-  id: ID!
-  user: Bytes!
-  amount: BigInt!
-  timestamp: BigInt!
+type Mint @entity(immutable: true) {
+  id: Bytes!
+  user: Bytes! # address
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
 
-type Withdraw @entity {
-  id: ID!
-  user: Bytes!
-  amount: BigInt!
-  timestamp: BigInt!
+type Withdraw @entity(immutable: true) {
+  id: Bytes!
+  user: Bytes! # address
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
   transactionHash: Bytes!
 }

@@ -8,9 +8,9 @@ dataSources:
     name: jackramp
     network: holesky
     source:
-      address: "0x148828f34cb1aa997422ebf6a41855f18b849f6f"
+      address: "0x725d859ce8c44806994bdbb629fddd8fd8ddb3ee"
       abi: jackramp
-      startBlock: 2630132
+      startBlock: 2636394
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7

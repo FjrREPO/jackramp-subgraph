@@ -108,85 +108,45 @@ export function handleTaskResponded(event: TaskRespondedEvent): void {
 }
 
 export function handleTransfer(event: TransferEvent): void {
-  let id = event.transaction.hash.concatI32(event.logIndex.toI32()).toHexString()
-  let transfer = new Transfer(id)
-  let tokenId = event.address.toHexString()
-  
-  // Load or create token
-  let token = Token.load(tokenId)
-  if (!token) {
-    token = new Token(tokenId)
-    token.totalSupply = BigInt.fromI32(0)
-    token.save()
-  }
-  
-  // Handle receiver
+  let entity = new Transfer(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  );
+  entity.from = event.params.from;
   let toHolderId = event.params.to.toHexString()
-  let toHolder = TokenHolder.load(toHolderId)
-  if (!toHolder) {
-    toHolder = new TokenHolder(toHolderId)
-    toHolder.token = tokenId
-    toHolder.address = event.params.to
-    toHolder.balance = BigInt.fromI32(0)
-  }
-  
-  toHolder.balance = toHolder.balance.plus(event.params.value)
-  
-  // Handle sender
-  if (event.params.from.toHexString() != "0x0000000000000000000000000000000000000000") {
-    let fromHolder = TokenHolder.load(event.params.from.toHexString())
-    if (fromHolder) {
-      fromHolder.balance = fromHolder.balance.minus(event.params.value)
-      fromHolder.save()
-    }
-  }
-  
-  transfer.from = event.params.from
-  transfer.to = toHolderId
-  transfer.value = event.params.value
-  transfer.timestamp = event.block.timestamp
-  transfer.transactionHash = event.transaction.hash
-  
-  transfer.save()
-  toHolder.save()
+  entity.to = toHolderId;
+  entity.value = event.params.value;
+
+  entity.blockNumber = event.block.number;
+  entity.blockTimestamp = event.block.timestamp;
+  entity.transactionHash = event.transaction.hash;
+
+  entity.save();
 }
 
 export function handleMint(event: MintEvent): void {
-  let id = event.transaction.hash.concatI32(event.logIndex.toI32()).toHexString()
-  let mint = new Mint(id)
-  
-  mint.user = event.params.user
-  mint.amount = event.params.amount
-  mint.timestamp = event.block.timestamp
-  mint.transactionHash = event.transaction.hash
-  
-  // Update token supply
-  let token = Token.load(event.address.toHexString())
-  if (!token) {
-    token = new Token(event.address.toHexString())
-    token.totalSupply = BigInt.fromI32(0)
-  }
-  token.totalSupply = token.totalSupply.plus(event.params.amount)
-  
-  mint.save()
-  token.save()
+  let entity = new Mint(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  );
+  entity.user = event.params.user;
+  entity.amount = event.params.amount;
+
+  entity.blockNumber = event.block.number;
+  entity.blockTimestamp = event.block.timestamp;
+  entity.transactionHash = event.transaction.hash;
+
+  entity.save();
 }
 
 export function handleWithdraw(event: WithdrawEvent): void {
-  let id = event.transaction.hash.concatI32(event.logIndex.toI32()).toHexString()
-  let withdraw = new Withdraw(id)
-  
-  withdraw.user = event.params.user
-  withdraw.amount = event.params.amount
-  withdraw.timestamp = event.block.timestamp
-  withdraw.transactionHash = event.transaction.hash
-  
-  // Update token supply
-  let token = Token.load(event.address.toHexString())
-  if (token) {
-    token.totalSupply = token.totalSupply.minus(event.params.amount)
-    token.save()
-  }
-  
-  withdraw.save()
+  let entity = new Withdraw(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  );
+  entity.user = event.params.user;
+  entity.amount = event.params.amount;
+
+  entity.blockNumber = event.block.number;
+  entity.blockTimestamp = event.block.timestamp;
+  entity.transactionHash = event.transaction.hash;
+
+  entity.save();
 }
