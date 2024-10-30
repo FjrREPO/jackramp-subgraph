@@ -1,0 +1,106 @@
+enum OffRampStatus {
+  PENDING
+  COMPLETED
+}
+
+type OffRamp @entity {
+  id: Bytes!
+
+  user: Bytes!
+  requestedAmount: BigInt!
+  requestedAmountRealWorld: BigInt!
+  channelAccount: Bytes!
+  channelId: Bytes!
+  status: OffRampStatus!
+
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+
+  receiver: Bytes
+  proof: Bytes
+  reclaimProof: Bytes
+  fillBlockNumber: BigInt
+  fillBlockTimestamp: BigInt
+  fillTransactionHash: Bytes
+}
+
+type OfframpRequest @entity {
+  id: ID!
+  user: Bytes!
+  amount: BigInt!
+  amountRealWorld: BigInt!
+  channelAccount: Bytes!
+  channelId: Bytes!
+  requestCreatedBlock: BigInt!
+  isCompleted: Boolean!
+  task: Task @derivedFrom(field: "offrampRequest")
+  createdAt: BigInt!
+  transactionHash: Bytes!
+}
+
+type Task @entity {
+  id: ID!
+  taskIndex: BigInt!
+  channelId: String!
+  transactionId: String!
+  requestOfframpId: Bytes!
+  receiver: Bytes!
+  taskCreatedBlock: BigInt!
+  offrampRequest: OfframpRequest!
+  operator: Operator
+  status: String!
+  createdAt: BigInt!
+  respondedAt: BigInt
+  transactionHash: Bytes!
+}
+
+type Operator @entity {
+  id: ID!
+  address: Bytes!
+  tasksResponded: [Task!]! @derivedFrom(field: "operator")
+  totalTasksCompleted: BigInt!
+  lastActiveTimestamp: BigInt!
+}
+
+type Token @entity {
+  id: ID!
+  totalSupply: BigInt!
+  holders: [TokenHolder!]! @derivedFrom(field: "token")
+}
+
+type TokenHolder @entity {
+  id: ID!
+  address: Bytes!
+  token: Token!
+  balance: BigInt!
+  transactions: [Transfer!]! @derivedFrom(field: "to")
+}
+
+type Transfer @entity(immutable: true) {
+  id: Bytes!
+  from: Bytes! # address
+  to: TokenHolder! # address
+  value: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Mint @entity(immutable: true) {
+  id: Bytes!
+  user: Bytes! # address
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Withdraw @entity(immutable: true) {
+  id: Bytes!
+  user: Bytes! # address
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
